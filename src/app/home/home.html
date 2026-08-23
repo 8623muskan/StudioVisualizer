@@ -1,0 +1,107 @@
+<style>
+  .page-container { min-height: 100vh; display: flex; flex-direction: column; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .navbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 48px; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-box { background: #2563eb; color: #ffffff; font-weight: 800; font-size: 1rem; padding: 8px 12px; border-radius: 8px; }
+  .brand-info h1 { margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.1; }
+  .brand-info span { font-size: 0.78rem; color: #64748b; }
+  .hero-grid { max-width: 1200px; margin: 40px auto; padding: 0 32px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: start; box-sizing: border-box; }
+  .left-pane { display: flex; flex-direction: column; }
+  .badge-tag { display: inline-block; align-self: flex-start; padding: 6px 14px; background-color: #eff6ff; color: #2563eb; font-size: 0.75rem; font-weight: 700; border-radius: 20px; margin-bottom: 16px; border: 1px solid #dbeafe; }
+  .title-main { font-size: 3rem; font-weight: 800; margin: 0 0 16px 0; line-height: 1.1; }
+  .highlight-text { color: #2563eb; }
+  .description { font-size: 1.05rem; color: #475569; margin-bottom: 28px; line-height: 1.6; }
+  .hidden-input { display: none; }
+  .drop-box { background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 32px 24px; text-align: center; cursor: pointer; transition: 0.2s; }
+  .drop-box:hover { border-color: #2563eb; background: #f8faff; }
+  .icon-circle { width: 48px; height: 48px; margin: 0 auto 12px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #2563eb; font-size: 20px; font-weight: bold;}
+  .upload-prompt h3 { margin: 0 0 6px 0; font-size: 1.2rem; }
+  .sub-prompt { color: #64748b; font-size: 0.9rem; margin-bottom: 10px; }
+  .link-span { color: #2563eb; text-decoration: underline; }
+  .selected-preview-card { display: flex; flex-direction: column; gap: 12px; }
+  .card-thumbnail { width: 100%; max-height: 250px; object-fit: cover; border-radius: 10px; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; }
+  .file-meta { color: #16a34a; font-weight: 600; font-size: 0.85rem; }
+  .btn-remove { background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;}
+  .btn-continue { width: 100%; margin-top: 20px; padding: 16px 24px; background: #2563eb; color: #ffffff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+  .btn-continue:disabled { background: #cbd5e1; cursor: not-allowed; }
+  .right-pane { display: block; }
+  .preview-panel { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+  .panel-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .live-indicator { width: 8px; height: 8px; background: #16a34a; border-radius: 50%; }
+  .panel-tag { font-size: 0.75rem; font-weight: 700; color: #475569; }
+  .canvas-box { width: 100%; height: 320px; background: #0f172a; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .live-img { width: 100%; height: 100%; object-fit: cover; }
+  .canvas-empty { text-align: center; color: #94a3b8; }
+  .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 10px;}
+  .panel-desc { margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 16px; }
+  .panel-desc h4 { margin: 0 0 6px 0; color: #0f172a; }
+  .panel-desc p { margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.5;}
+  @media (max-width: 992px) { .hero-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="page-container">
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo-box">SW</div>
+      <div class="brand-info">
+        <h1>SmartWall</h1>
+        <span>Paint Visualizer</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="hero-grid">
+    <!-- Left Column: Upload -->
+    <div class="left-pane">
+      <div class="badge-tag">? SMART INTERIOR VISUALIZER</div>
+      <h2 class="title-main">See Your Walls<br /><span class="highlight-text">In Any Color.</span></h2>
+      <p class="description">Upload a photo of your room and discover how different wall colors can transform your space before you paint.</p>
+
+      <label class="drop-box" for="roomFileInput">
+        <input id="roomFileInput" type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden-input" />
+
+        <div *ngIf="!previewUrl" class="upload-prompt">
+          <div class="icon-circle">?</div>
+          <h3>Upload your room</h3>
+          <p class="sub-prompt">Drag & drop your image here or <span class="link-span">browse files</span></p>
+        </div>
+
+        <div *ngIf="previewUrl" class="selected-preview-card">
+          <img [src]="previewUrl" alt="Room preview" class="card-thumbnail" />
+          <div class="card-footer">
+            <span class="file-meta">? Image Ready</span>
+            <button type="button" class="btn-remove" (click)="removeSelectedFile($event)">Remove</button>
+          </div>
+        </div>
+      </label>
+
+      <button type="button" class="btn-continue" [disabled]="!selectedFile || isUploading" (click)="uploadAndContinue()">
+        <span *ngIf="!isUploading">Continue to Visualizer ?</span>
+        <span *ngIf="isUploading">Opening Visualizer...</span>
+      </button>
+    </div>
+
+    <!-- Right Column: Live Preview -->
+    <div class="right-pane">
+      <div class="preview-panel">
+        <div class="panel-header">
+          <span class="live-indicator"></span>
+          <span class="panel-tag">ROOM PREVIEW LIVE</span>
+        </div>
+        <div class="canvas-box">
+          <img *ngIf="previewUrl" [src]="previewUrl" class="live-img" />
+          <div *ngIf="!previewUrl" class="canvas-empty">
+            <span class="empty-icon">???</span>
+            <p><strong>Try your colors</strong></p>
+            <p>Choose a shade after uploading</p>
+          </div>
+        </div>
+        <div class="panel-desc">
+          <h4>SmartWall Paint Visualizer</h4>
+          <p>Transform your room before you paint with geometric surface segmentation and real-time color simulation.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

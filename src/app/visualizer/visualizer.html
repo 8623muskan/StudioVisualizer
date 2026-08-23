@@ -1,0 +1,105 @@
+<style>
+  * { box-sizing: border-box; }
+  .vis-wrapper { display: flex; flex-direction: column; height: 100vh; background: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #0f172a; overflow: hidden; }
+  .vis-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #ffffff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); z-index: 10; }
+  .vis-header h2 { margin: 0; font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+  .btn-outline { background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; color: #475569; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;}
+  .btn-outline:hover { background: #f8fafc; border-color: #94a3b8; }
+  .btn-solid { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); border: none; padding: 10px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; color: #ffffff; box-shadow: 0 4px 12px rgba(37,99,235,0.2); display: inline-flex; align-items: center; gap: 8px; }
+  .vis-main { display: flex; flex: 1; overflow: hidden; padding: 24px; gap: 24px; }
+  .canvas-section { flex: 1; background: #ffffff; border-radius: 24px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #e2e8f0; padding: 24px; position: relative;}
+  .canvas-inner { position: relative; max-width: 100%; max-height: 75vh; display: inline-flex; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+  .room-image { display: block; width: 100%; height: auto; max-height: 75vh; object-fit: contain; border-radius: 16px; }
+  .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+  .wall-polygon { pointer-events: auto; cursor: pointer; mix-blend-mode: multiply; transition: fill-opacity 0.2s ease; }
+  .control-sidebar { width: 380px; background: #ffffff; border-radius: 24px; padding: 32px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+  .panel-block h3 { margin: 0 0 12px 0; font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;}
+  .color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .color-swatch { aspect-ratio: 1; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: relative; border: 2px solid transparent; }
+  .color-swatch.active { transform: scale(1.15); border: 3px solid #ffffff; box-shadow: 0 0 0 2px #2563eb; }
+  .color-check { display: none; font-weight: bold; }
+  .color-swatch.active .color-check { display: block; }
+  .wall-btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wall-btn { flex: 1 1 calc(50% - 8px); padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 600; color: #475569; cursor: pointer; }
+  .wall-btn.active { background: #eff6ff; border-color: #3b82f6; color: #2563eb; }
+  .btn-select-all { width: 100%; padding: 10px; background: transparent; border: 2px dashed #cbd5e1; border-radius: 10px; cursor: pointer; font-weight: 600; color: #64748b; }
+  input[type="range"] { width: 100%; height: 8px; background: #e2e8f0; border-radius: 8px; outline: none; margin: 12px 0; }
+  .status-alert { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); padding: 12px 24px; background: #10b981; color: #ffffff; border-radius: 30px; font-weight: 600; font-size: 0.95rem; z-index: 100; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+  .upload-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; color: #64748b; }
+  .dot-marker { position: absolute; width: 12px; height: 12px; background: #2563eb; border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); z-index: 20; pointer-events: none; }
+</style>
+
+<div class="vis-wrapper">
+  <header class="vis-header">
+    <button class="btn-outline" (click)="goBack()">&#8592; Back to Home</button>
+    <h2>Studio Visualizer</h2>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <label class="btn-solid" style="cursor: pointer;">
+        📁 Upload Room
+        <input type="file" (change)="uploadImageToAI($event)" accept="image/*" style="display: none;" />
+      </label>
+      <button class="btn-outline" (click)="toggleMeasuringMode()" [style.background]="isMeasuringMode ? '#eff6ff' : '#fff'" [style.borderColor]="isMeasuringMode ? '#2563eb' : '#cbd5e1'">
+        {{ isMeasuringMode ? '📍 Click Corners on Image...' : '📐 Measure Wall First' }}
+      </button>
+      <button class="btn-outline" (click)="saveCurrentDesign()">Save Design</button>
+    </div>
+  </header>
+
+  <div *ngIf="statusMessage" class="status-alert">{{ statusMessage }}</div>
+
+  <main class="vis-main">
+    <section class="canvas-section">
+      <div *ngIf="!imageUrl" class="upload-placeholder">
+        <p style="font-weight: 600; font-size: 1.1rem; margin: 0;">No room image loaded</p>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin: 0;">Click "Upload Room" above to begin</p>
+      </div>
+
+      <div class="canvas-inner" *ngIf="imageUrl" (click)="onCanvasClick($event)" [style.cursor]="isMeasuringMode ? 'crosshair' : 'default'">
+        <img [src]="imageUrl" alt="Room Canvas" class="room-image" (load)="onImageLoaded()" (error)="onImageError()" />
+        
+        <!-- Render User Measurement Dots -->
+        <div *ngFor="let pt of userPoints" class="dot-marker" [style.left.%]="pt.x / 10 }}" [style.top.%]="pt.y / 10"></div>
+
+        <svg class="svg-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+          <path fill-rule="evenodd" *ngIf="isWallSelected('left')" [attr.d]="getWallPath('left')" [attr.fill]="selectedColor" [attr.fill-opacity]="currentOpacity" class="wall-polygon" (click)="selectWall('left')" />
+          <path fill-rule="evenodd" *ngIf="isWallSelected('back')" [attr.d]="getWallPath('back')" [attr.fill]="selectedColor" [attr.fill-opacity]="currentOpacity" class="wall-polygon" (click)="selectWall('back')" />
+          <path fill-rule="evenodd" *ngIf="isWallSelected('right')" [attr.d]="getWallPath('right')" [attr.fill]="selectedColor" [attr.fill-opacity]="currentOpacity" class="wall-polygon" (click)="selectWall('right')" />
+        </svg>
+      </div>
+    </section>
+
+    <aside class="control-sidebar">
+      <div class="panel-block">
+        <h3>Choose Your Color</h3>
+        <div class="color-grid">
+          <div *ngFor="let color of colors; trackBy: trackColor" class="color-swatch" [style.backgroundColor]="color.hex" [class.active]="selectedColor === color.hex" (click)="selectColor(color)">
+            <span class="color-check" [style.color]="getContrastColor(color.hex)">&#10003;</span>
+          </div>
+        </div>
+        <div style="font-size: 0.95rem; color: #334155; margin-top: 8px; text-align: center; font-weight: 600; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0;">{{ selectedColorName }}</div>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid #e2e8f0; width: 100%;">
+
+      <div class="panel-block">
+        <h3>Wall Selection <span style="color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 12px;">{{ getSelectedWallCount() }} / 3</span></h3>
+        <div class="wall-btn-group">
+          <button *ngFor="let wall of wallLabels; trackBy: trackWall" class="wall-btn" [class.active]="isWallSelected(wall.key)" (click)="selectWall(wall.key)">{{ wall.label }}</button>
+        </div>
+        <button class="btn-select-all" style="margin-top: 8px;" (click)="selectAllWalls()">{{ areAllWallsSelected() ? '- Deselect All Walls' : '+ Select All Walls' }}</button>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid #e2e8f0; width: 100%;">
+
+      <div class="panel-block">
+        <h3>Paint Opacity</h3>
+        <input type="range" min="0.1" max="1.0" step="0.05" [value]="paintOpacity" (input)="updateOpacity($event)" />
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; font-weight: 600;">
+          <span>Subtle</span>
+          <span style="color: #2563eb; font-weight: 800;">{{ paintOpacityPercent() }}%</span>
+          <span>Strong</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>

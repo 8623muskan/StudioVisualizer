@@ -1,0 +1,206 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Base Top Navigation */
+header, .header, .visualizer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 36px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-badge {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Layout Grid Container */
+.visualizer-container, .main-layout, main {
+  max-width: 1440px;
+  margin: 24px auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  align-items: start;
+  box-sizing: border-box;
+}
+
+/* Left: Interactive Canvas & Viewport Area */
+.canvas-wrapper, .viewport-container, .image-preview-area {
+  position: relative;
+  background-color: #0f172a;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 520px;
+}
+
+.canvas-wrapper img, .room-base-image {
+  max-width: 100%;
+  max-height: 650px;
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+svg.wall-overlay, svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+svg path, .wall-polygon {
+  cursor: pointer;
+  mix-blend-mode: multiply;
+  transition: fill 0.2s ease, fill-opacity 0.2s ease;
+}
+
+svg path:hover {
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+
+/* Right: Control Sidebar */
+.control-panel, .sidebar, aside {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section Headings */
+h1, h2, h3, h4 {
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.badge, .tag {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* Wall Buttons Group */
+.wall-selection, .wall-toggle-group, .btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+button {
+  padding: 8px 16px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+button:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+button.active, button.selected, button[aria-pressed="true"] {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+/* Opacity Slider */
+.slider-container, input[type="range"] {
+  width: 100%;
+  margin: 10px 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+/* Color Swatches Grid */
+.color-grid, .palette-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.color-swatch, button.color-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.color-swatch:hover, button.color-btn:hover {
+  transform: scale(1.03);
+}
+
+.color-swatch.active, button.color-btn.active {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.2);
+}
+
+/* Information / Info Cards */
+.info-card, .protected-areas, .shade-compare {
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Responsive adjustment */
+@media (max-width: 1024px) {
+  .visualizer-container, .main-layout, main {
+    grid-template-columns: 1fr;
+  }
+}

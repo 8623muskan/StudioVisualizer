@@ -1,0 +1,133 @@
+<div class="auth-page">
+
+  <div class="auth-card">
+
+    <button
+      type="button"
+      class="back-button"
+      (click)="goBack()">
+      ← Back to SmartWall
+    </button>
+
+    <div class="logo">
+      SW
+    </div>
+
+    <h1>
+      {{ isLogin ? 'Welcome back.' : 'Create account.' }}
+    </h1>
+
+    <p class="subtitle">
+      {{
+        isLogin
+          ? 'Login to continue visualizing your room with SmartWall.'
+          : 'Create your SmartWall account and start designing your space.'
+      }}
+    </p>
+
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="success-message">
+        {{ successMessage }}
+      </div>
+    }
+
+    <form
+      #authForm="ngForm"
+      (ngSubmit)="submit()">
+
+      @if (!isLogin) {
+        <div class="form-group">
+
+          <label for="name">
+            Full Name
+          </label>
+
+          <input
+            id="name"
+            type="text"
+            name="name"
+            [(ngModel)]="name"
+            placeholder="Enter your name"
+            autocomplete="name">
+        </div>
+      }
+
+      <div class="form-group">
+
+        <label for="email">
+          Email Address
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="you@example.com"
+          autocomplete="email">
+      </div>
+
+      <div class="form-group">
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          autocomplete="current-password">
+      </div>
+
+      <button
+        type="submit"
+        class="auth-button"
+        [disabled]="isLoading">
+
+        {{ isLoading
+          ? (isLogin ? 'Logging in...' : 'Creating account...')
+          : (isLogin ? 'Login to SmartWall' : 'Create Account')
+        }}
+
+      </button>
+
+    </form>
+
+    <div class="switch-mode">
+
+      @if (isLogin) {
+
+        <span>Don't have an account?</span>
+
+        <button
+          type="button"
+          (click)="switchMode()">
+          Create account
+        </button>
+
+      } @else {
+
+        <span>Already have an account?</span>
+
+        <button
+          type="button"
+          (click)="switchMode()">
+          Login
+        </button>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

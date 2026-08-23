@@ -1,0 +1,111 @@
+<div class="login-page">
+
+  <div class="login-card">
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        SW
+      </div>
+
+      <div>
+        <div class="brand-name">
+          SmartWall
+        </div>
+
+        <div class="brand-subtitle">
+          Paint Visualizer
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="login-header">
+
+      <div class="badge">
+        ✦ SMART INTERIOR VISUALIZER
+      </div>
+
+      <h1>
+        Welcome Back
+      </h1>
+
+      <p>
+        Login to visualize your room before you paint.
+      </p>
+
+    </div>
+
+
+    <form
+      (ngSubmit)="login()"
+    >
+
+      <div class="form-group">
+
+        <label>
+          Email
+        </label>
+
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+        />
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Password
+        </label>
+
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+
+      </div>
+
+
+      @if (errorMessage) {
+
+        <div class="error-message">
+          {{ errorMessage }}
+        </div>
+
+      }
+
+
+      <button
+        type="submit"
+        class="login-button"
+        [disabled]="loading"
+      >
+
+        @if (loading) {
+          Logging in...
+        } @else {
+          Login →
+        }
+
+      </button>
+
+    </form>
+
+
+    <div class="security-note">
+      🔒 Your account and room images stay secure.
+    </div>
+
+  </div>
+
+</div>

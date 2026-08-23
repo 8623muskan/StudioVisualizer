@@ -1,0 +1,97 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1e293b;
+}
+
+/* Container & Grid Setup */
+body, div {
+  box-sizing: border-box;
+}
+
+/* Main Container Card */
+div:has(> .hero-title),
+div:has(> h2),
+div:has(> img) {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+/* Image Uploaded Box */
+img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* File / Remove Button section */
+button:has-text("Remove"),
+button {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #475569;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  margin: 10px 0;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* "Continue to Visualizer" Primary Action Button */
+button:has-text("Continue"),
+input[type="submit"],
+.btn-primary,
+button:not([disabled]):last-of-type {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  display: inline-block;
+  margin-top: 16px;
+}
+
+button[disabled] {
+  background: #e2e8f0 !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+/* Success and Security Text */
+div:has-text("?"),
+p:has-text("?") {
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 12px 0 4px;
+}
+
+/* Privacy & Footer notes */
+p, span {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+}

@@ -1,0 +1,117 @@
+<div class="page-container">
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo-box">SW</div>
+      <div class="brand-info">
+        <h1>SmartWall</h1>
+        <span>Paint Visualizer</span>
+      </div>
+    </div>
+    <div class="nav-badge">
+      <span>✦ Studio Edition</span>
+    </div>
+  </header>
+
+  <!-- Main Hero Content -->
+  <main class="hero-grid">
+    <!-- Left Section: Upload Controls -->
+    <div class="left-pane">
+      <div class="badge-tag">✦ SMART INTERIOR VISUALIZER</div>
+      <h2 class="title-main">
+        See Your Walls<br />
+        <span class="highlight-text">In Any Color.</span>
+      </h2>
+      <p class="description">
+        Upload a photo of your room and discover how different wall colors can transform your space before you paint.
+      </p>
+
+      <!-- Upload Drop Area -->
+      <label class="drop-box" for="roomFileInput" [class.has-image]="!!previewUrl">
+        <input
+          id="roomFileInput"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/jpg"
+          (change)="onFileSelected($event)"
+          class="hidden-input"
+        />
+
+        <div *ngIf="!previewUrl" class="upload-prompt">
+          <div class="icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <h3>Upload your room</h3>
+          <p class="sub-prompt">
+            Drag & drop your image here or <span class="link-span">browse files</span>
+          </p>
+          <span class="format-pill">JPG, PNG or WEBP · Recommended high quality image</span>
+        </div>
+
+        <!-- In-card preview when image is selected -->
+        <div *ngIf="previewUrl" class="selected-preview-card">
+          <img [src]="previewUrl" alt="Room preview" class="card-thumbnail" />
+          <div class="card-footer">
+            <div class="file-meta">
+              <span class="check-icon">✓</span>
+              <span>{{ selectedFile?.name }} ({{ (selectedFile ? selectedFile.size / (1024 * 1024) : 0).toFixed(2) }} MB)</span>
+            </div>
+            <button type="button" class="btn-remove" (click)="removeSelectedFile($event)">Remove</button>
+          </div>
+        </div>
+      </label>
+
+      <!-- Upload Error Display -->
+      <div *ngIf="uploadError" class="error-box">
+        {{ uploadError }}
+      </div>
+
+      <!-- Action Button -->
+      <button
+        type="button"
+        class="btn-continue"
+        [disabled]="!selectedFile || isUploading"
+        (click)="uploadAndContinue()"
+      >
+        <span *ngIf="!isUploading">Continue to Visualizer →</span>
+        <span *ngIf="isUploading">Opening Visualizer...</span>
+      </button>
+
+      <div class="trust-footer">
+        🔒 Your room image stays private and secure.
+      </div>
+    </div>
+
+    <!-- Right Section: Live Preview Card -->
+    <div class="right-pane">
+      <div class="preview-panel">
+        <div class="panel-header">
+          <span class="live-indicator"></span>
+          <span class="panel-tag">ROOM PREVIEW LIVE</span>
+        </div>
+
+        <div class="canvas-box">
+          <img
+            *ngIf="previewUrl"
+            [src]="previewUrl"
+            alt="Main room preview"
+            class="live-img"
+          />
+          <div *ngIf="!previewUrl" class="canvas-empty">
+            <span class="empty-icon">🖼️</span>
+            <p>Try your colors</p>
+            <small>Choose a shade after uploading</small>
+          </div>
+        </div>
+
+        <div class="panel-desc">
+          <h4>SmartWall Paint Visualizer</h4>
+          <p>Transform your room before you paint with geometric surface segmentation and real-time color simulation.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
